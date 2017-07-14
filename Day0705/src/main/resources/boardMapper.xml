@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sesoc.global.webTest.dao.BoardDAO">
+	<select id="select" parameterType="Map" resultType="Board">
+		SELECT
+			boardnum,
+			custid,
+			title,
+			content,
+			inputdate,
+			hits,
+			originalfile,
+			savedfile
+		FROM board
+		WHERE
+			<choose>
+				<when test="searchtype == 'title'">
+					title
+				</when>
+				<when test="searchtype == 'content'">
+					content
+				</when>
+				<when test="searchtype == 'custid'">
+					custid
+				</when>
+			</choose>
+		 	LIKE '%' || #{searchword} || '%'
+		ORDER BY inputdate DESC
+	</select>
+	<select id="selectOne" parameterType="int" resultType="Board">
+		SELECT * FROM board WHERE boardnum = #{boardnum}
+	</select>
+	<insert id="insert" parameterType="Board">
+		INSERT INTO board
+		VALUES (board_seq.nextval, #{custid}, #{title}, #{content}, sysdate, 0
+		<if test="originalfile != null">
+			,#{originalfile}, #{savedfile}
+		</if>
+		<if test="originalfile == null">
+			,'', ''
+		</if>
+			)
+	</insert>
+	<update id="update" parameterType="Board">
+		UPDATE board SET
+			title = #{title},
+			content = #{content}
+			<if test="originalfile != null">
+			, originalfile = #{originalfile},
+			savedfile= #{savedfile}
+			</if>
+			WHERE boardnum = #{boardnum}
+	</update>
+	<delete id="delete" parameterType="int">
+		DELETE FROM board WHERE boardnum = #{boardnum}
+	</delete>
+	<update id="incrementCount" parameterType="int">
+		UPDATE board SET hits = hits + 1
+		WHERE boardnum = #{boardnum}
+	</update>
+	<select id="getBoardCount" parameterType="map" resultType="int">
+		SELECT COUNT(*)
+		FROM board
+			WHERE
+			<choose>
+				<when test="searchtype == 'title'">
+					title
+				</when>
+				<when test="searchtype == 'content'">
+					content
+				</when>
+				<when test="searchtype == 'custid'">
+					custid
+				</when>
+			</choose>
+			LIKE '%' || #{searchword} || '%'
+	</select>
+</mapper>
