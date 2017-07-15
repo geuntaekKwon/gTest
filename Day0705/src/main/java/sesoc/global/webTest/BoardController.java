@@ -46,7 +46,7 @@ public class BoardController {
 	BoardRepository repo;
 	
 	/**
-	 * 글 목록 요청    // Master 합쳐보기
+	 * 글 목록 요청    // UPDATE !!!!!!!! 제발 성공하자!!!!!!!!!!
 	 * */
 	@RequestMapping("/boardList")
 	// <a href="boardList?currentPage=${}">
